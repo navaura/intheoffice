@@ -44,8 +44,8 @@ A comprehensive web application built with Flask for managing employee attendanc
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/employee-portal.git
-cd employee-portal
+git clone https://github.com/navaura/intheoffice.git
+cd intheoffice
 ```
 
 2. Set up a virtual environment
