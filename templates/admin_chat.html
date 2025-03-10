@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3>Chat with Employees</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for employee in employees %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ employee.name }}</span>
+                                <a href="{{ url_for('chat_with_user', user_id=employee.user_id) }}" class="btn btn-outline-primary btn-sm">Chat</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

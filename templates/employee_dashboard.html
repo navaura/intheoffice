@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3>Employee Dashboard</h3>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Welcome, {{ employee.first_name }} {{ employee.last_name }}</strong></p>
+                        <p><strong>Employee ID:</strong> {{ employee.employee_id }}</p>
+                        <p><strong>Department:</strong> {{ employee.department }}</p>
+                        <p><strong>Designation:</strong> {{ employee.designation }}</p>
+                        <p><strong>Location (State):</strong> {{ employee.state or 'Not Available' }}</p>
+                        <p><strong>Today's Attendance:</strong> 
+                            {{ today_attendance.check_in.strftime('%Y-%m-%d %H:%M:%S') if today_attendance else 'Not checked in' }}
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('chat_dashboard') }}" class="btn btn-outline-primary">Chat</a>
+                            <a href="{{ url_for('view_notifications') }}" class="btn btn-outline-primary">Notifications</a>
+                            <a href="{{ url_for('employee_chat') }}" class="btn btn-outline-primary">Chat</a>
+                            <a href="{{ url_for('extend_time') }}" class="btn btn-outline-warning">Extend Work Time</a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center text-muted">
+                        <small>Logged in as {{ employee.designation }} at {{ employee.department }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

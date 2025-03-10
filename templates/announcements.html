@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - Office Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('admin_dashboard') }}">Office Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('create_employee') }}">Add Employee</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('attendance_report') }}">Attendance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('announcements') }}">Announcements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('manage_files') }}">Files</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('chat_dashboard') }}">Chat</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <!-- Announcement Form -->
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Create Announcement</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('announcements') }}">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="content" class="form-label">Content</label>
+                                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="is_global" name="is_global" checked>
+                                <label class="form-check-label" for="is_global">Send to all employees</label>
+                            </div>
+                            <div id="recipients-container" class="mb-3 d-none">
+                                <label class="form-label">Select Recipients</label>
+                                <div class="card card-body bg-light">
+                                    {% for employee in employees %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="recipients" value="{{ employee.id }}" id="emp{{ employee.id }}">
+                                        <label class="form-check-label" for="emp{{ employee.id }}">
+                                            {{ employee.name }} ({{ employee.employee_id }})
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create & Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements List -->
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Announcements</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if announcements %}
+                            <div class="list-group">
+                                {% for announcement in announcements %}
+                                <div class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ announcement.title }}</h5>
+                                        <small>{{ announcement.created_at.strftime('%d %b %Y, %H:%M') }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ announcement.content }}</p>
+                                    <small class="text-muted">
+                                        {% if announcement.is_global %}
+                                            Sent to all employees
+                                        {% else %}
+                                            Sent to selected employees
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">No announcements yet.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show/hide recipients selection based on global checkbox
+        document.addEventListener('DOMContentLoaded', function() {
+            const isGlobalCheckbox = document.getElementById('is_global');
+            const recipientsContainer = document.getElementById('recipients-container');
+            
+            isGlobalCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    recipientsContainer.classList.add('d-none');
+                } else {
+                    recipientsContainer.classList.remove('d-none');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
